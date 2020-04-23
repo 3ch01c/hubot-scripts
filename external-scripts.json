@@ -1,0 +1,12 @@
+[
+  "hubot-brain-inspect",
+  "hubot-dice",
+  "hubot-eval",
+  "hubot-help",
+  "hubot-markov",
+  "hubot-redis-brain",
+  "hubot-speed-test",
+  "hubot-uptime",
+  "hubot-voting",
+  "hubot-xkcd"
+]
