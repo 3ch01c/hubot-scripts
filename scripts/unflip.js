@@ -16,7 +16,8 @@
 // Author:
 //   3ch01c
 
-module.exports = (robot) =>
+module.exports = (robot) => {
   robot.hear(/┻━┻/i, function (msg) {
     return msg.send("┬─┬ ノ( ^_^ノ)");
   });
+};

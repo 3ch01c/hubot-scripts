@@ -1,0 +1,25 @@
+{
+  "name": "hubot-scripts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "covid19.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/3ch01c/hubot-scripts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/3ch01c/hubot-scripts/issues"
+  },
+  "homepage": "https://github.com/3ch01c/hubot-scripts#readme",
+  "dependencies": {
+    "hubot-speed-test": "^1.0.1"
+  }
+}
