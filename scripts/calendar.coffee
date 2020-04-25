@@ -25,140 +25,168 @@
 
 moment = require "moment-timezone"
 
-class Calendar
-  constructor: (@robot) ->
-    storageLoaded = =>
-      @storage = @robot.brain.data.calendar ||= {}
-      @robot.logger.debug "Calendar Data Loaded: " + JSON.stringify(@storage, null, 2)
-    @robot.brain.on "loaded", storageLoaded
-    storageLoaded() # just in case storage was loaded before we got here
-
-  # set an event
-  set: (key, value) ->
-    @robot.logger.debug "setting #{key}: #{value}"
-    unless key then throw new Error "You didn't provide an event. If you need help, ask me [help calendar]."
-    unless value then throw new Error "You didn't provide a date. If you need help, ask me [help calendar]."
-    date = moment value
-    unless date.isValid() then date = moment value, "LLLL" # Thursday, September 4 1986 8:30 PM
-    unless date.isValid() then date = moment value, "dddd, MMMM dd, yyyy h:mm A" # Thursday, September 4, 1986 8:30 PM
-    unless date.isValid() then date = moment value, "h:mm A" # 8:30 PM
-    unless date.isValid() then throw new Error "I don't understand that date format. If you need help, ask me [help calendar]."
-    @robot.logger.debug "setting #{key}: #{date.unix()}"
-    @storage[key] = date.unix()
-    @robot.brain.save()
-
-  # get an event
-  get: (key, relative) ->
-    @robot.logger.debug "getting #{key}"
-    unless key then throw new Error "You didn't provide an event. If you need help, ask me [help calendar]."
-    re = new RegExp key
-    results = {}
-    for k,v of @storage
-      if re.test k
-        while typeof v == "string" and v.startsWith "_"
-          # factoid is an alias
-          v = @storage[v.trim "_" ]
-        v = moment.unix(v)
-        tense = "#{if v.isBefore moment() then "was" else "is"}"
-        if relative then results[k] = "#{k} #{tense} #{v.fromNow()}"
-        else results[k] = "#{k} #{tense} on #{v.format("LLLL")}"
-        @robot.logger.debug "found #{k}: #{results[k]}"
-    results
-  
-  # delete an event
-  delete: (key) ->
-    @robot.logger.debug "deleting #{key}"
-    value = @storage[key]
-    delete @storage[key]
-    @robot.brain.save()
-    date = moment value
-
-  confirm: (msg, message, reaction="ok") ->
-    if message
-      msg.reply message
-    else if msg.robot.adapter.client.react
-      msg.robot.adapter.client.react msg.message.id, reaction
-    else
-      msg.reply "You got it, boss."
-
 module.exports = (robot) ->  
+  class Calendar
+    constructor: (@robot) ->
+      storageLoaded = =>
+        @storage = @robot.brain.data.calendar ||= {}
+        @robot.logger.debug "calendar: " + JSON.stringify(@storage, null, 2)
+      @robot.brain.on "loaded", storageLoaded
+      storageLoaded() # just in case storage was loaded before we got here
+
+    # set an event
+    set: (key, value) ->
+      unless key? and value?
+        throw new Error "You didn't provide an event to set. If you need help, ask me [help calendar]."
+      date = moment value
+      unless date.isValid()
+        date = moment value, "LLLL" # Thursday, September 4 1986 8:30 PM
+      unless date.isValid()
+        date = moment value, "dddd, MMMM dd, yyyy h:mm A" # Thursday, September 4, 1986 8:30 PM
+      unless date.isValid()
+        date = moment value, "h:mm A" # 8:30 PM
+      unless date.isValid()
+        throw new Error "I don't understand that date format. If you need help, ask me [help calendar]."
+      @storage[key] = date.unix()
+      @robot.brain.save()
+
+    # get an event
+    get: (key, relative) ->
+      unless key
+        throw new Error "You didn't provide an event to get. If you need help, ask me [help calendar]."
+      results = null
+      re = new RegExp key
+      for k,v of @storage
+        if re.test k
+          results ?= {}
+          while typeof v == "string" and v?.startsWith "_"
+            # calendar is an alias. strip off the _
+            v = @storage[v.substring 1, v.length]
+          results[k] = moment.unix(v)
+      results
+    
+    # delete an event
+    delete: (key) ->
+      unless key?
+        throw new Error "You didn't provide an event to delete. If you need help, ask me [help calendar]."
+      value = @storage[key]
+      delete @storage[key]
+      @robot.brain.save()
+      value
+
+    # acknowledge a message
+    acknowledge: (msg, message, reaction) ->
+      if reaction? and msg.robot.adapter.client.react?
+        msg.robot.adapter.client.react msg.message.id, reaction
+      else
+        msg.reply message
+
+  tense = (date, plural) ->
+    if date.isBefore moment() then "was" else "is"
+
   calendar = new Calendar robot
 
-  robot.respond /calendar set (.+) = (.+)/i, (msg) ->
-    event = msg.match[1].trim()
-    date = msg.match[2].trim()
+  # set an event
+  robot.respond /calendar set ([^=]+)=([^=]+)/i, (res) ->
+    event = res.match[1].trim()
+    date = res.match[2].trim()
     try
       calendar.set event, date
-      calendar.confirm msg
+      calendar.acknowledge res, "OK", "ok"
     catch e
       robot.logger.debug e
-      calendar.confirm msg, e.message, "shrug"
+      calendar.acknowledge res, e.message
 
-  robot.respond /calendar get (.+)/i, (msg) ->
-    event = msg.match[1].trim()
-    try
-      dates = calendar.get event
-      for k,v of dates
-        msg.reply "#{v}"
-    catch e
-      robot.logger.debug e
-      calendar.confirm msg, e.message, "shrug"
-  
-  robot.respond /calendar (delete|remove) (.+)/i, (msg) ->
-    event = msg.match[2].trim()
-    try
-      calendar.delete event
-      calendar.confirm msg, "#{event} has been removed."
-    catch e
-      robot.logger.debug e
-      calendar.confirm msg, e.message, "shrug"
-  
-  robot.hear /(.+) (was|is|will be) (on|at) ([^\.]+)/i, (msg) ->
-    event = msg.match[1].trim()
-    date = msg.match[4].trim()
+  # set an event (nlp)
+  robot.hear /(.+) (was|is|will be) (on|at) ([^\.]+)/i, (res) ->
+    event = res.match[1].trim()
+    date = res.match[4].trim()
     try
       calendar.set event, date
-      calendar.confirm msg
+      calendar.acknowledge res, "OK", "ok"
     catch e
       robot.logger.debug e
-      calendar.confirm msg, null, "shrug"
+      calendar.acknowledge res, e.message
 
-  robot.hear /how long (since|until) ([^\?]+)/i, (msg) ->
-    event = msg.match[2].trim()
-    try
-      dates = calendar.get event, true
-      for k,v of dates
-        msg.reply "#{v}"
-    catch e
-      robot.logger.debug e
-      calendar.confirm msg, null, "shrug"
-
-  robot.hear /When (is|was|will be) ([^\?]+)/i, (msg) ->
-    event = msg.match[2].trim()
+  # get an event date
+  robot.respond /calendar get (.+)/i, (res) ->
+    event = res.match[1].trim()
     try
       dates = calendar.get event
-      for k,v of dates
-        msg.reply "#{v}"
+      unless dates?
+        calendar.acknowledge res, "I don't know an event like that.", "shrug"
+      else
+        for k,v of dates
+          res.reply "#{k} #{tense v} on #{v.format("LLLL")}"
     catch e
       robot.logger.debug e
-      calendar.confirm msg, null, "shrug"
-
-  robot.hear /What day is ([^\?]+)/i, (msg) ->
-    event = msg.match[1].trim()
+      calendar.acknowledge res, e.message
+  
+  # get an event date relative to now (nlp)
+  robot.hear /how long (since|until) ([^\?]+)/i, (res) ->
+    event = res.match[2].trim()
     try
       dates = calendar.get event
-      for k,v of dates
-        msg.reply "#{v}"
+      unless dates?
+        calendar.acknowledge res, "I don't know an event like that.", "shrug"
+      else
+        for k,v of dates
+          res.reply "#{k} #{tense v} #{v.fromNow()}"
     catch e
       robot.logger.debug e
-      calendar.confirm msg, null, "shrug"
+      calendar.acknowledge res, e.message
 
-  robot.hear /What time is ([^\?]+)/i, (msg) ->
-    event = msg.match[1].trim()
+  # get an event date (nlp)
+  robot.hear /When (is|was|will be) ([^\?]+)/i, (res) ->
+    event = res.match[2].trim()
     try
       dates = calendar.get event
-      for k,v of dates
-        msg.reply "#{v}"
+      unless dates?
+        calendar.acknowledge res, "I don't know an event like that.", "shrug"
+      else
+        for k,v of dates
+          res.reply "#{k} #{tense v} on #{v.format("LLLL")}"
     catch e
       robot.logger.debug e
-      calendar.confirm msg, null, "shrug"
+      calendar.acknowledge res, e.message
+
+  # get an event day (nlp)
+  robot.hear /What day is ([^\?]+)/i, (res) ->
+    event = res.match[1].trim()
+    try
+      dates = calendar.get event
+      unless dates?
+        calendar.acknowledge res, "I don't know an event like that.", "shrug"
+      else
+        for k,v of dates
+          res.reply "#{k} #{tense v} on #{v.format("dddd")}"
+    catch e
+      robot.logger.debug e
+      calendar.acknowledge res, e.message
+
+  # get an event time (nlp)
+  robot.hear /What time is ([^\?]+)/i, (res) ->
+    event = res.match[1].trim()
+    try
+      dates = calendar.get event
+      unless dates?
+        calendar.acknowledge res, "I don't know an event like that.", "shrug"
+      else
+        for k,v of dates
+          res.reply "#{k} #{tense v} at #{v.format("HH:mm")}"
+    catch e
+      robot.logger.debug e
+      calendar.acknowledge res, e.message
+
+  # delete an event
+  robot.respond /calendar (delete|remove) (.+)/i, (res) ->
+    event = res.match[2].trim()
+    try
+      value = calendar.delete event
+      unless value?
+        factoid.acknowledge res, "I don't know an event like that.", "shrug"
+      else
+        calendar.acknowledge res, "OK", "ok"
+    catch e
+      robot.logger.debug e
+      calendar.acknowledge res, e.message

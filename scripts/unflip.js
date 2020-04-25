@@ -17,7 +17,7 @@
 //   3ch01c
 
 module.exports = (robot) => {
-  robot.hear(/┻━┻/i, function (msg) {
+  robot.hear(/(┻━┻|unflip)/i, function (msg) {
     return msg.send("┬─┬ ノ( ^_^ノ)");
   });
 };

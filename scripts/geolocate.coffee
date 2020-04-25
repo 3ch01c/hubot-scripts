@@ -5,7 +5,8 @@
 #   "lodash": "^4.17.15"
 #
 # Configuration:
-#   None
+#   MAXMIND_API_USER_ID
+#   MAXMIND_API_LICENSE_KEY
 #
 # Notes:
 #   None
@@ -19,9 +20,9 @@
 
 _ = require 'lodash'
 
-api_url = 'https://geoip.maxmind.com/geoip/v2.1/city'
-
 module.exports = (robot) ->
+  api_url = 'https://geoip.maxmind.com/geoip/v2.1/city'
+
   robot.respond /geo(locate)? ((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))$/i, (msg) ->
     ip = msg.match[2]
     url = "#{api_url}/#{ip}"

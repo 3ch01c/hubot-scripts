@@ -26,7 +26,7 @@ WORDNIK_API_KEY = process.env.WORDNIK_API_KEY
 module.exports = (robot) ->
   # Word definition
   robot.respond /define (.*)/i, (msg) ->
-    word = msg.match[2]
+    word = msg.match[1]
     
     fetch_wordnik_resource(msg, word, 'definitions', {}) (err, res, body) ->
       definitions = JSON.parse(body)

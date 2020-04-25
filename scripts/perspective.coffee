@@ -7,17 +7,18 @@
 # Configuration:
 #
 # Notes:
-#   None
+#   TODO: update API endpoint
 #
 # Commands:
-#   hubot perspective:toxicity <TEXT> - get toxicity score for TEXT
+#   hubot perspective:toxicity <test> - get toxicity score for text
 #
 # Author:
-#   Jack Miner <3ch01c@gmail.com>
-PERSPECTIVE_API_KEY = process.env.PERSPECTIVE_API_KEY
-api_url = "https://commentanalyzer.googleapis.com/v1alpha1/"
+#   3ch01c
 
 module.exports = (robot) ->
+  PERSPECTIVE_API_KEY = process.env.PERSPECTIVE_API_KEY
+  api_url = "https://commentanalyzer.googleapis.com/v1alpha1/"
+
   robot.respond /perspective(:toxicity)? (.+)$/i, (msg) ->
     text = msg.match[2].trim()
     data = comment:

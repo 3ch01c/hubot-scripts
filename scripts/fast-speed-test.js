@@ -23,6 +23,7 @@ HTTP_PROXY = process.env.HTTP_PROXY;
 
 module.exports = function (robot) {
   robot.respond(/speedtest$/i, (msg) => {
+    msg.send("running speedtest...");
     let speedtest = new FastSpeedtest({
       token: FAST_API_KEY, // required
       verbose: false, // default: false
@@ -37,7 +38,7 @@ module.exports = function (robot) {
     speedtest
       .getSpeed()
       .then((s) => {
-        msg.reply(`Speed: ${s} Mbps`);
+        msg.reply(`Download: ${s} Mbps`);
       })
       .catch((e) => {
         msg.reply(e.message);

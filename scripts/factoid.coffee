@@ -32,17 +32,21 @@ module.exports = (robot) ->
 
     # set a factoid
     set: (key, value) ->
+      unless key? and value?
+        throw new Error "You didn't provide a factoid to learn. If you need help, ask me [help factoid]."
       @storage[key] = value
       @robot.brain.save()
 
     # get factoid(s)
     get: (key) ->
+      unless key?
+        throw new Error "You didn't provide a factoid to recall. If you need help, ask me [help factoid]."
       results = null
       re = new RegExp key
       for k,v of @storage
         if re.test k
           results ?= {}
-          while v?.startsWith "_"
+          while typeof v == "string" and v?.startsWith "_"
             # factoid is an alias. strip off the _
             v = @storage[v.substring 1, v.length]
           results[k] = v
@@ -50,82 +54,96 @@ module.exports = (robot) ->
 
     # delete a factoid
     delete: (key) ->
+      unless key?
+        throw new Error "You didn't provide a factoid to delete. If you need help, ask me [help factoid]."
       value = @storage[key]
       delete @storage[key]
       @robot.brain.save()
       value
 
     # acknowledge a message
-    acknowledge: (msg, reaction="ok", reply="You got it, boss.") ->
-      if msg.robot.adapter.client.react?
-        msg.robot.adapter.client.react(msg.message.id, reaction)
+    acknowledge: (msg, message, reaction) ->
+      if reaction? and msg.robot.adapter.client.react?
+        msg.robot.adapter.client.react msg.message.id, reaction
       else
-        msg.reply(reply)
-
+        msg.reply message
+    
   factoid = new Factoid robot
 
   # set a factoid
   robot.respond /factoid (set|learn) ([^=]+)=([^=]+)$/i, (res) ->
     key = res.match[2].trim()
     value = res.match[3].trim()
-    unless key? and value?
-      res.reply "You didn't include a factoid to learn. Ask me [help factoid] for syntax."
-    else
+    try
       factoid.set key, value
-      factoid.acknowledge res
+      factoid.acknowledge res, "OK", "ok"
+    catch e
+      robot.logger.debug e
+      factoid.acknowledge res, e.message
 
   # set a factoid (shorthand)
   robot.hear /!([^=]+)=([^=]+)$/i, (res) ->
     key = res.match[1].trim()
     value = res.match[2].trim()
-    unless key? and value?
-      res.reply "You didn't include a factoid to learn. Ask me [help factoid] for syntax."
-    else
+    try
       factoid.set key, value
-      factoid.acknowledge res 
+      factoid.acknowledge res, "OK", "ok"
+    catch e
+      robot.logger.debug e
+      factoid.acknowledge res, e.message
 
   # get a factoid
   robot.respond /factoid (get|recall) ([^=]+)$/i, (res) ->
     key = res.match[2].trim()
-    unless key?
-      res.reply "You didn't include a factoid to recall. Ask me [help factoid] for syntax."
-    else
+    try
       values = factoid.get key
       unless values?
-        factoid.acknowledge res, "shrug", "I don't know a factoid like that."
+        factoid.acknowledge res, "I don't know a factoid like that.", "shrug"
       else
         for k,v of values
           res.reply "#{k} is #{v}"
+    catch e
+      robot.logger.debug e
+      factoid.acknowledge res, e.message
 
   # get a factoid (shorthand)
   robot.hear /!([^=]+)$/i, (res) ->
     key = res.match[1].trim()
-    values = factoid.get key
-    unless values?
-      factoid.acknowledge res, "shrug", "I don't know a factoid like that."
-    else
-      for k,v of values
-        res.reply "#{k} is #{v}"
+    try
+      values = factoid.get key
+      unless values?
+        factoid.acknowledge res, "I don't know a factoid like that.", "shrug"
+      else
+        for k,v of values
+          res.reply "#{k} is #{v}"
+    catch e
+      robot.logger.debug e
+      factoid.acknowledge res, e.message
   
   # get a factoid (nlp)
   robot.hear /(.+)\?$/i, (res) ->
     key = res.match[1].trim()
     robot.logger.debug "key: #{key}"
-    values = factoid.get key
-    unless values?
-      factoid.acknowledge res, "shrug", "I don't know a factoid like that."
-    else
-      for k,v of values
-        res.reply "#{v}"
+    try
+      values = factoid.get key
+      unless values?
+        factoid.acknowledge res, "I don't know a factoid like that.", "shrug"
+      else
+        for k,v of values
+          res.reply "#{v}"
+    catch e
+      robot.logger.debug e
+      factoid.acknowledge res, e.message
 
   # delete a factoid
   robot.respond /factoid (delete|forget) ([^=]+)$/i, (res) ->
     key = res.match[2].trim()
-    unless key?
-      res.reply "You didn't include a factoid to forget. Ask me [help factoid] for syntax."
-    else
+    try
       value = factoid.delete key
       unless value?
-        factoid.acknowledge res, "shrug", "I don't know a factoid like that."
+        factoid.acknowledge res, "I don't know a factoid like that.", "shrug"
       else
-        factoid.acknowledge res
+        factoid.acknowledge res, "OK", "ok"
+    catch e
+      robot.logger.debug e
+      factoid.acknowledge res, e.message
