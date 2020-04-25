@@ -57,10 +57,7 @@ module.exports = (robot) ->
 
     # alias a factoid
     alias: (key) ->
-      value = @storage[key]
-      if value
-        @set alias, "_#{key}"
-      value
+      @set alias, "_#{key}"
 
     # acknowledge a message
     acknowledge: (msg, reaction="ok", reply="You got it, boss.") ->
