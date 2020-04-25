@@ -10,13 +10,13 @@
 # Notes:
 #   When recalling a factoid, the key is treated as a regex. To match a key
 #   exactly, use ^key$. Keys and values cannot contain equal signs.
-#   Values cannot begin with an underscore.
+#   If you want to alias a factoid to another factoid, set its value to an
+#   underscore followed by the target factoid.
 #
 # Commands:
 #   hubot factoid learn <KEY> = <VALUE> - set a factoid
 #   hubot factoid forget <KEY> - delete a factoid
 #   hubot factoid recall <KEY> - get factoid(s)
-#   hubot factoid alias <ALIAS> = <KEY> - alias a factoid
 #
 # Author:
 #   3ch01c
@@ -42,9 +42,9 @@ module.exports = (robot) ->
       for k,v of @storage
         if re.test k
           results ?= {}
-          while v.startsWith "_"
-            # factoid is an alias
-            v = @storage[v.trim "_" ]
+          while v?.startsWith "_"
+            # factoid is an alias. strip off the _
+            v = @storage[v.substring 1, v.length]
           results[k] = v
       results
 
@@ -54,10 +54,6 @@ module.exports = (robot) ->
       delete @storage[key]
       @robot.brain.save()
       value
-
-    # alias a factoid
-    alias: (key) ->
-      @set alias, "_#{key}"
 
     # acknowledge a message
     acknowledge: (msg, reaction="ok", reply="You got it, boss.") ->
@@ -69,9 +65,9 @@ module.exports = (robot) ->
   factoid = new Factoid robot
 
   # set a factoid
-  robot.respond /factoid( (set|learn))? ([^=]+)=([^_][^=]+)$/i, (res) ->
-    key = res.match[3].trim()
-    value = res.match[4].trim()
+  robot.respond /factoid (set|learn) ([^=]+)=([^=]+)$/i, (res) ->
+    key = res.match[2].trim()
+    value = res.match[3].trim()
     unless key? and value?
       res.reply "You didn't include a factoid to learn. Ask me [help factoid] for syntax."
     else
@@ -79,7 +75,7 @@ module.exports = (robot) ->
       factoid.acknowledge res
 
   # set a factoid (shorthand)
-  robot.hear /!([^=]+)=([^=_]+)$/i, (res) ->
+  robot.hear /!([^=]+)=([^=]+)$/i, (res) ->
     key = res.match[1].trim()
     value = res.match[2].trim()
     unless key? and value?
@@ -89,8 +85,8 @@ module.exports = (robot) ->
       factoid.acknowledge res 
 
   # get a factoid
-  robot.respond /factoid( (get|recall))? ([^=]+)$/i, (res) ->
-    key = res.match[3].trim()
+  robot.respond /factoid (get|recall) ([^=]+)$/i, (res) ->
+    key = res.match[2].trim()
     unless key?
       res.reply "You didn't include a factoid to recall. Ask me [help factoid] for syntax."
     else
@@ -118,27 +114,18 @@ module.exports = (robot) ->
     values = factoid.get key
     unless values?
       factoid.acknowledge res, "shrug", "I don't know a factoid like that."
-    for k,v of values
-      res.reply "#{v}"
+    else
+      for k,v of values
+        res.reply "#{v}"
 
   # delete a factoid
-  robot.respond /factoid (delete|forget) (.+)$/i, (res) ->
+  robot.respond /factoid (delete|forget) ([^=]+)$/i, (res) ->
     key = res.match[2].trim()
     unless key?
       res.reply "You didn't include a factoid to forget. Ask me [help factoid] for syntax."
     else
       value = factoid.delete key
-      factoid.acknowledge res 
-
-  # alias a factoid
-  robot.respond /factoid alias ([^=]+)=([^_][^=]+)$/i, (res) ->
-    alias = res.match[1].trim()
-    key = res.match[2].trim()
-    unless alias? and key?
-      res.reply "You didn't include a factoid to alias. Ask me [help factoid] for syntax."
-    else
-      value = factoid.alias key
       unless value?
-        res.reply "I don't know a factoid like that."
+        factoid.acknowledge res, "shrug", "I don't know a factoid like that."
       else
-        factoid.acknowledge res 
+        factoid.acknowledge res
