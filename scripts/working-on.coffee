@@ -7,12 +7,12 @@
 # Configuration:
 #   None
 #
+# Notes:
+#   None
+#
 # Commands:
 #   hubot i am working on <anything> - Set what you're working on
 #   hubot what is everyone working on? - Find out what everyone is working on
-#
-# Notes:
-#   None
 #
 # Author:
 #   beezee

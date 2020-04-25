@@ -7,6 +7,9 @@
 # Configuration:
 #   MYWOT_API_KEY - Sign up at http://www.mywot.com/
 #
+# Notes:
+#   None
+#
 # Commands:
 #   hubot mywot <url> - Gets MyWot Report for URL
 #

@@ -2,9 +2,12 @@
 #   Geolocate an IP Address
 #
 # Dependencies:
-#   "lodash": "^4.17.4"
+#   "lodash": "^4.17.15"
 #
 # Configuration:
+#   None
+#
+# Notes:
 #   None
 #
 # Commands:

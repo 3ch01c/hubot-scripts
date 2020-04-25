@@ -7,6 +7,9 @@
 # Configuration:
 #   GOOGLE_SAFEBROWSING_API_KEY - Sign up at https://developers.google.com/safe-browsing/key_signup
 #
+# Notes:
+#   None
+#
 # Commands:
 #   hubot gsafe <url> - Gets Google Safebrowsing Report for URL
 #

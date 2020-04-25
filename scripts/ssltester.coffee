@@ -7,6 +7,9 @@
 # Configuration:
 #   None
 #
+# Notes:
+#   None
+#
 # Commands:
 #   hubot ssl - Looks up some SSL configuration information.
 #

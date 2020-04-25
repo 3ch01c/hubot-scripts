@@ -7,6 +7,9 @@
 # Configuration:
 #   HUBOT_WOLFRAM_APPID - your AppID
 #
+# Notes:
+#   None
+#
 # Commands:
 #   hubot calc <question> - Searches Wolfram Alpha for the answer to the question
 #

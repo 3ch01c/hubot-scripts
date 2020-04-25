@@ -7,10 +7,10 @@
 // Configuration:
 //   None
 //
-// Commands:
+// Notes:
 //   None
 //
-// Notes:
+// Commands:
 //   None
 //
 // Author:

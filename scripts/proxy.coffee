@@ -1,17 +1,17 @@
 # Description
 #   Provide http_proxy and https_proxy support
 #
+# Dependencies:
+#   None
+#
 # Configuration:
 #   http_proxy - proxy for HTTP connections 
 #   https_proxy - proxy for HTTPS connections
 #
-# Dependencies:
+# Notes:
 #   None
 #
 # Commands:
-#   None
-#
-# Notes:
 #   None
 #
 # Author:

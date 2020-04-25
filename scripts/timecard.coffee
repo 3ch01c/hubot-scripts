@@ -8,6 +8,9 @@
 # Configuration:
 # HUBOT_TIMECARD_ANNOUNCE_CHANNEL - default announcement channel
 #
+# Notes:
+#   None
+#
 # Commands:
 #   hubot time(card)?([: ])submitted - let hubot know you submitted your time
 #   hubot time(card)?([: ])announce - find out when the bomb is set to explode

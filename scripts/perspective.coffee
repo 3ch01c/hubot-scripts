@@ -6,6 +6,9 @@
 #w
 # Configuration:
 #
+# Notes:
+#   None
+#
 # Commands:
 #   hubot perspective:toxicity <TEXT> - get toxicity score for TEXT
 #

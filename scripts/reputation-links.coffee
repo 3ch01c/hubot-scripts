@@ -7,6 +7,9 @@
 # Configuration:
 #   None
 #
+# Notes:
+#   None
+#
 # Commands:
 #   hubot reputation ip <ip> - Generates links to research an IP
 #   hubot reputation url <url> - Generates links to research an URL

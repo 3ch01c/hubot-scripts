@@ -2,8 +2,8 @@
 #   Display a look from looks.wtf
 #
 # Dependencies:
-#   "lodash"
-#   "yamljs"
+#   "lodash": "4.17.15"
+#   "yamljs": "0.3.0"
 #
 # Configuration:
 #   None
@@ -13,6 +13,9 @@
 #
 # Commands:
 #   hubot look LOOK - Display a look from looks.wtf
+#
+# Author:
+#   3ch01c
 
 YAML = require "yamljs"
 _ = require "lodash"

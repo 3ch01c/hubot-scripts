@@ -7,6 +7,9 @@
 # Configuration:
 #   None
 #
+# Notes:
+#   None
+#
 # Commands:
 #   hubot expand url <url> - Expands URL
 #

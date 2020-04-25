@@ -1,11 +1,20 @@
 # Description
 #   hubot script for looking up cryptocurriencies
 #
+# Dependencies:
+#   None
+#
+# Configuration:
+#   None
+#
+# Notes:
+#   None
+#
 # Commands:
 #   hubot cryptocurrency BASE TARGET - convert BASE to TARGET currency
 #
 # Author:
-#   Jack Miner <3ch01c@gmail.com>
+#   3ch01c
 
 URI = 'https://api.cryptonator.com/api/ticker'
 

@@ -9,6 +9,9 @@
 # Configuration:
 #   None
 #
+# Notes:
+#   None
+#
 # Commands:
 #   @<USER> ++[ for <REASON>] - award whuffie to USER (for REASON)
 #   @<USER> --[ for <REASON>] - revoke whuffie from USER (for REASON)

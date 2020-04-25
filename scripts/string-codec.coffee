@@ -8,15 +8,14 @@
 # Configuration:
 #   None
 #
-# Commands:
-#   hubot enc[ode] [algo] <string> - display string encode with specified algorithm
-#   hubot enc[ode] list - list of all available algorithm
-#
-#   hubot dec[ode] [algo] <string> - display string decode with specified algorithm
-#   hubot dec[ode] list - list of all available algorithm
-#
 # Notes:
 #   morse format example: ... --- ... = SOS
+#
+# Commands:
+#   hubot encode <algo> <string> - encode a string with specified algorithm
+#   hubot encode list - list of all available algorithm
+#   hubot decode <algo> <string> - decode a string with specified algorithm
+#   hubot decode list - list of all available algorithm
 #
 # Author:
 #   knjcode <knjcode@gmail.com>

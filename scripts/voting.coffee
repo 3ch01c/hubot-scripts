@@ -7,6 +7,9 @@
 # Configuration:
 #   None
 #
+# Notes:
+#   None
+#
 # Commands:
 #   hubot start vote item1, item2, item3, ... - start a standard vote (users can cast one vote)
 #   hubot start multivote item1, item2, item3, ... - start a multi vote (users can cast one vote per choice)
@@ -14,9 +17,6 @@
 #   hubot show choices
 #   hubot show votes - shows current votes
 #   hubot end vote
-#
-# Notes:
-#   None
 #
 # Author:
 #   joshingly

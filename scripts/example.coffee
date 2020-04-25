@@ -17,6 +17,9 @@
 #
 # Commands:
 #   None
+#
+# Author:
+#   None
 
 module.exports = (robot) ->
 

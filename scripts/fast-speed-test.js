@@ -2,16 +2,16 @@
 //   Test internet speed
 //
 // Dependencies:
-//   "fast-speedtest-api
+//   "fast-speedtest-api": "^0.3.2"
 //
 // Configuration:
 //   None
 //
-// Commands:
-//   speedtest
-//
 // Notes:
 //   None
+//
+// Commands:
+//   speedtest
 //
 // Author:
 //   3ch01c

@@ -7,6 +7,9 @@
 # Configuration:
 #   VIRUSTOTAL_API_KEY - Sign up at https://www.virustotal.com/en/documentation/public-api/
 #
+# Notes:
+#   None
+#
 # Commands:
 #   hubot virustotal [hash <hash>|url <url>|ip <ip>] - Searches VirusTotal for a hash, url, or ip address
 #

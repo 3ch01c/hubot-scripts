@@ -7,6 +7,9 @@
 # Configuration:
 #   None
 #
+# Notes:
+#   None
+#
 # Commands:
 #   hubot reddit me <subreddit> [limit] - Returns results from subreddit.
 #

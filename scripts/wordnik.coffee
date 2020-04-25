@@ -7,15 +7,15 @@
 # Configuration:
 #   WORDNIK_API_KEY
 #
+# Notes:
+#   You'll need an API key from http://developer.wordnik.com/
+#   FIXME This should be merged with word-of-the-day.coffee
+#
 # Commands:
 #   hubot define <word> - Grabs a dictionary definition of a word.
 #   hubot pronounce <word> - Links to a pronunciation of a word.
 #   hubot spell <word> - Suggests correct spellings of a possible word.
 #   hubot bigram <word> - Grabs the most frequently used bigram phrases containing this word
-#
-# Notes:
-#   You'll need an API key from http://developer.wordnik.com/
-#   FIXME This should be merged with word-of-the-day.coffee
 #
 # Author:
 #   Aupajo

@@ -1,11 +1,3 @@
-"use strict";
-
-const HttpsProxyAgent = require("https-proxy-agent");
-const _ = require("lodash");
-const { DateTime } = require("luxon");
-const util = require("util");
-const moreutil = require("./lib/moreutil.js");
-
 // Description
 //   Get COVID-19 statistics
 //
@@ -19,6 +11,14 @@ const moreutil = require("./lib/moreutil.js");
 //
 // Author:
 //   3ch01c <5547581+3ch01c@users.noreply.github.com>
+
+"use strict";
+
+const HttpsProxyAgent = require("https-proxy-agent");
+const _ = require("lodash");
+const { DateTime } = require("luxon");
+const util = require("util");
+const moreutil = require("./lib/moreutil.js");
 
 const HTTP_PROXY = process.env.HTTP_PROXY;
 

@@ -1,11 +1,20 @@
 # Description:
 #   A way to search images on giphy.com
 #
+# Dependencies:
+#   None
+#
 # Configuration:
 #   HUBOT_GIPHY_API_KEY
 #
+# Notes:
+#   None
+#
 # Commands:
 #   hubot gif me <query> - Returns an animated gif matching the requested search term.
+#
+# Author:
+#   3ch1c
 
 API_KEY = process.env.HUBOT_GIPHY_API_KEY
 BASE_URL = 'http://api.giphy.com/v1'
