@@ -134,7 +134,7 @@ module.exports = (robot) ->
       factoid.acknowledge res 
 
   # alias a factoid
-  robot.respond /factoid alias (.+) is (.+)$/i, (res) ->
+  robot.respond /factoid alias ([^=]+)=([^_][^=]+)$/i, (res) ->
     alias = res.match[1].trim()
     key = res.match[2].trim()
     unless alias? and key?
