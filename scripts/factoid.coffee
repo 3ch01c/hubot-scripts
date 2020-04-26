@@ -126,9 +126,7 @@ module.exports = (robot) ->
     robot.logger.debug "key: #{key}"
     try
       values = factoid.get key
-      unless values?
-        factoid.acknowledge res, "I don't know a factoid like that.", "shrug"
-      else
+      if values?
         for k,v of values
           res.reply "#{v}"
     catch e
