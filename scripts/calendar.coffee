@@ -103,7 +103,6 @@ module.exports = (robot) ->
     date = res.match[4].trim()
     try
       calendar.set event, date
-      calendar.acknowledge res, "OK", "ok"
     catch e
       robot.logger.debug e
       calendar.acknowledge res, e.message
@@ -127,9 +126,7 @@ module.exports = (robot) ->
     event = res.match[2].trim()
     try
       dates = calendar.get event
-      unless dates?
-        calendar.acknowledge res, "I don't know an event like that.", "shrug"
-      else
+      if dates?
         for k,v of dates
           res.reply "#{k} #{tense v} #{v.fromNow()}"
     catch e
@@ -141,9 +138,7 @@ module.exports = (robot) ->
     event = res.match[2].trim()
     try
       dates = calendar.get event
-      unless dates?
-        calendar.acknowledge res, "I don't know an event like that.", "shrug"
-      else
+      if dates?
         for k,v of dates
           res.reply "#{k} #{tense v} on #{v.format("LLLL")}"
     catch e
@@ -155,9 +150,7 @@ module.exports = (robot) ->
     event = res.match[1].trim()
     try
       dates = calendar.get event
-      unless dates?
-        calendar.acknowledge res, "I don't know an event like that.", "shrug"
-      else
+      if dates?
         for k,v of dates
           res.reply "#{k} #{tense v} on #{v.format("dddd")}"
     catch e
