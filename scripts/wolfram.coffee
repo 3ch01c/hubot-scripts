@@ -11,14 +11,14 @@
 #   None
 #
 # Commands:
-#   hubot calc <question> - Searches Wolfram Alpha for the answer to the question
+#   hubot wolfram <question> - Searches Wolfram Alpha for the answer to the question
 #
 # Author:
 #   dhorrigan
 
 module.exports = (robot) ->
   HUBOT_WOLFRAM_APPID = process.env.HUBOT_WOLFRAM_APPID?
-  robot.respond /wolfram (.*)$/i, (msg) ->
+  robot.respond /((Who|What|When|Where|Why|How|wolfram) (.+))$/i, (msg) ->
     try
       unless HUBOT_WOLFRAM_APPID?
         msg.reply "HUBOT_WOLFRAM_APPID is undefined"
@@ -42,8 +42,6 @@ module.exports = (robot) ->
                 """
                 answers.push answer
               msg.reply answers.join "\n"
-            else
-              msg.reply "Well, that one is a bit of an enigma."
     catch e
       robot.logger.debug e
       msg.reply e.message
