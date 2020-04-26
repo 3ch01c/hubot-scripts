@@ -10,9 +10,6 @@
 #   HUBOT_DARK_SKY_SEPARATOR (optional - defaults to "\n")
 #   HUBOT_GOOGLE_GEOCODING_API_KEY
 #
-# Notes:
-#   None
-#
 # Commands:
 #   hubot weather - Get the weather for HUBOT_DARK_SKY_DEFAULT_LOCATION
 #   hubot weather <location> - Get the weather for <location>
@@ -23,12 +20,12 @@
 # Author:
 #   kyleslattery
 #   awaxa
-
-HUBOT_GOOGLE_GEOCODING_API_KEY = process.env.HUBOT_GOOGLE_GEOCODING_API_KEY
+#   3ch01c
 
 module.exports = (robot) ->
+  HUBOT_GOOGLE_GEOCODING_API_KEY = process.env.HUBOT_GOOGLE_GEOCODING_API_KEY?
   robot.respond /weather ?(.+)?/i, (msg) ->
-    return msg.send("HUBOT_GOOGLE_GEOCODING_API_KEY is not set.") unless HUBOT_GOOGLE_GEOCODING_API_KEY
+    return msg.send("HUBOT_GOOGLE_GEOCODING_API_KEY is not set.") unless HUBOT_GOOGLE_GEOCODING_API_KEY?
     location = msg.match[1] || process.env.HUBOT_DARK_SKY_DEFAULT_LOCATION
     return if not location
 
