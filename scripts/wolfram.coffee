@@ -2,10 +2,10 @@
 #   Allows hubot to answer almost any question by asking Wolfram Alpha
 #
 # Dependencies:
-#  "xml2js": "^0.4.17",
+#  None
 #
 # Configuration:
-#   HUBOT_WOLFRAM_APPID - your AppID
+#   HUBOT_WOLFRAM_APPID - your app id
 #
 # Notes:
 #   None
@@ -16,30 +16,34 @@
 # Author:
 #   dhorrigan
 
-xml2js = require 'xml2js'
-parser = xml2js.Parser()
-
 module.exports = (robot) ->
-  robot.respond /calc(ulat(e|or))? (.*)$/i, (msg) ->
-    if process.env.HUBOT_WOLFRAM_APPID?
-      expr = msg.match[3]
-      console.log expr
-      uri = "http://api.wolframalpha.com/v2/query?input=#{encodeURIComponent(expr)}&primary=true&appid=#{process.env.HUBOT_WOLFRAM_APPID}"
-      console.log uri
-      robot.http(uri).get() (err, response, body) ->
-        if err?
-          throw err
-        else
-          parser.parseString body, (err, results) ->
-            console.log JSON.stringify results
-            answer = "Well, that one is a bit of an enigma."
-            if err?
-              throw err
-            else if results.queryresult.$.success != 'false'
-              answer = results.queryresult.pod[1].subpod[0].plaintext[0]
-              console.log answer
+  HUBOT_WOLFRAM_APPID = process.env.HUBOT_WOLFRAM_APPID?
+  robot.respond /wolfram (.*)$/i, (msg) ->
+    try
+      unless HUBOT_WOLFRAM_APPID?
+        msg.reply "HUBOT_WOLFRAM_APPID is undefined"
+      else
+        input = msg.match[1]
+        uri = "http://api.wolframalpha.com/v2/query?input=#{encodeURIComponent(input)}&format=image,plaintext&output=JSON&appid=#{encodeURIComponent(process.env.HUBOT_WOLFRAM_APPID)}"
+        robot.http(uri).get() (err, response, body) ->
+          if err?
+            robot.logger.debug err
+            msg.reply err.message
+          else
+            results = JSON.parse body;
+            robot.logger.debug "wolfram results: #{JSON.stringify results, null, 2}"
+            if results.queryresult.success
+              answers = []
+              results.queryresult.pods[1..].forEach (pod) ->
+                answer = 
+                """
+                **#{pod.title}**
+                #{pod.subpods.map((subpod) -> if subpod.plaintext.length > 0 then subpod.plaintext).join('\n')}
+                """
+                answers.push answer
+              msg.reply answers.join "\n"
             else
-              console.log results.queryresult.didyoumeans[0].didyoumean
-            msg.send answer
-    else
-      msg.send "HUBOT_WOLFRAM_APPID is undefined"
+              msg.reply "Well, that one is a bit of an enigma."
+    catch e
+      robot.logger.debug e
+      msg.reply e.message
