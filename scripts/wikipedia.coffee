@@ -58,12 +58,12 @@ module.exports = (robot) ->
                 else
                     summary = article.extract.split(". ")[0..1].join ". "
 
-                res.reply 
-                """
+                answer = """
                 #{article.title}: #{summary}.
                 Original article: #{createURL(article.title)}
                 """
-                return
+
+                res.reply answer
 
 createURL = (title) ->
     "#{WIKI_EN_URL}/#{encodeURIComponent(title)}"
