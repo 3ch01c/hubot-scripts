@@ -46,7 +46,7 @@ module.exports = (robot) ->
   robot.respond /dec(ode)? (\w*) (.*)/i, (msg) ->
     algo = msg.match[2]
     str = msg.match[3]
-    if algo in codec.DEC
+    if algo in codec.DEC_ALL
       msg.send codec.decoder(str, algo)
     else if algo == "morse"
       msg.send xmorse.decode(str, option)
