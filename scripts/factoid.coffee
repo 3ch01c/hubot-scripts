@@ -133,6 +133,19 @@ module.exports = (robot) ->
       robot.logger.debug e
       factoid.acknowledge res, e.message
 
+  # get a factoid (nlp)
+  robot.respond /(.+)\?$/i, (res) ->
+    key = res.match[1].trim()
+    robot.logger.debug "key: #{key}"
+    try
+      values = factoid.get key
+      if values?
+        for k,v of values
+          res.reply "#{v}"
+    catch e
+      robot.logger.debug e
+      factoid.acknowledge res, e.message
+
   # delete a factoid
   robot.respond /factoid (delete|forget) ([^=]+)$/i, (res) ->
     key = res.match[2].trim()
