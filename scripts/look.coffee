@@ -34,4 +34,16 @@ module.exports = (robot) ->
         return msg.reply "I'm afraid I can do that. There's been an error."
       filtered = _.filter looks, (o) -> o.tags.includes look
       looks = _.map filtered, (o) -> return o.plain
-      msg.send msg.random looks
+      msg.reply msg.random looks
+
+  robot.respond /flip something$/i, (msg) ->
+    look = "flip"
+    @robot.http(LOOKS_URL).get() (err, res, body) ->
+      if res.statusCode == 200
+        looks = YAML.parse body
+      else
+        robot.logger.debug res.statusCode
+        return msg.reply "I'm afraid I can do that."
+      filtered = _.filter looks, (o) -> o.tags.includes look
+      looks = _.map filtered, (o) -> return o.plain
+      msg.reply msg.random looks
