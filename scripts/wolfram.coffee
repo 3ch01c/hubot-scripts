@@ -18,7 +18,7 @@
 
 module.exports = (robot) ->
   HUBOT_WOLFRAM_APPID = process.env.HUBOT_WOLFRAM_APPID?
-  robot.respond /((Who|What|When|Where|Why|How|wolfram) (.+))$/i, (msg) ->
+  robot.respond /((Who|What|When|Where|Why|How) .+)$/i, (msg) ->
     try
       unless HUBOT_WOLFRAM_APPID?
         msg.reply "HUBOT_WOLFRAM_APPID is undefined"
@@ -42,6 +42,39 @@ module.exports = (robot) ->
                 """
                 answers.push answer
               msg.reply answers.join "\n"
+    catch e
+      robot.logger.debug e
+      msg.reply e.message
+
+  robot.respond /wolfram (.+)$/i, (msg) ->
+    try
+      unless HUBOT_WOLFRAM_APPID?
+        msg.reply "HUBOT_WOLFRAM_APPID is undefined"
+      else
+        input = msg.match[1]
+        uri = "http://api.wolframalpha.com/v2/query?input=#{encodeURIComponent(input)}&format=image,plaintext&output=JSON&appid=#{encodeURIComponent(process.env.HUBOT_WOLFRAM_APPID)}"
+        robot.http(uri).get() (err, response, body) ->
+          if err?
+            robot.logger.debug err
+            msg.reply err.message
+          else
+            results = JSON.parse body;
+            robot.logger.debug "wolfram results: #{JSON.stringify results, null, 2}"
+            if results.queryresult.success
+              answers = []
+              results.queryresult.pods[1..].forEach (pod) ->
+                answer = 
+                """
+                **#{pod.title}**
+                #{pod.subpods.map((subpod) -> if subpod.plaintext.length > 0 then subpod.plaintext).join('\n')}
+                """
+                answers.push answer
+              msg.reply answers.join "\n"
+            else
+              if msg.robot.adapter.client.react?
+                msg.robot.adapter.client.react msg.message.id, "shrug"
+              else
+                msg.reply "Well, that one is a bit of an enigma."
     catch e
       robot.logger.debug e
       msg.reply e.message
