@@ -71,7 +71,7 @@ module.exports = (robot) ->
   factoid = new Factoid robot
 
   # set a factoid
-  robot.respond /factoid (set|learn) ([^=]+)=([^=]+)$/i, (res) ->
+  robot.respond /factoid (set|learn) ([^=]+)=(.+)$/i, (res) ->
     key = res.match[2].trim()
     value = res.match[3].trim()
     try
@@ -82,7 +82,7 @@ module.exports = (robot) ->
       factoid.acknowledge res, e.message
 
   # set a factoid (shorthand)
-  robot.hear /!([^=]+)=([^=]+)$/i, (res) ->
+  robot.hear /!([^=]+)=(.+)$/i, (res) ->
     key = res.match[1].trim()
     value = res.match[2].trim()
     try
